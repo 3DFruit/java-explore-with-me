@@ -17,6 +17,7 @@ public interface StatisticsStorage extends JpaRepository<EndpointHit, Long> {
             "group by eh.app, eh.uri " +
             "order by count(eh.id) desc")
     List<ViewStats> getStatisticOfUrisByStartAndEnd(LocalDateTime start, LocalDateTime end, List<String> uris);
+
     @Query("select new ru.practicum.explorewithme.model.ViewStats(eh.app, eh.uri, count(distinct(eh.ip))) " +
             "from EndpointHit as eh " +
             "where eh.timestamp > ?1 and eh.timestamp < ?2 and eh.uri in ?3 " +

@@ -50,6 +50,7 @@ public class StatisticsClient {
                         .build()
                 )
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<>() {});
+                .bodyToMono(new ParameterizedTypeReference<>() {
+                });
     }
 }
