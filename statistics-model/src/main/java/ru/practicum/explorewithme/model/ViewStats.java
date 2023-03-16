@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ViewStats {
     String app;
     String uri;

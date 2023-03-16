@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties
-@FieldDefaults
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class EndpointHitDto {
     Long id;
     @NotBlank
