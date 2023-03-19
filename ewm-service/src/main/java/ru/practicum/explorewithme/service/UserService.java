@@ -1,0 +1,13 @@
+package ru.practicum.explorewithme.service;
+
+import org.springframework.data.domain.Pageable;
+import ru.practicum.explorewithme.model.user.NewUserRequest;
+import ru.practicum.explorewithme.model.user.UserDto;
+
+import java.util.List;
+
+public interface UserService {
+    List<UserDto> getUsersByIds(List<Long> ids, Pageable pageable);
+    UserDto createUser(NewUserRequest userRequest);
+    void deleteUser(Long userId);
+}
