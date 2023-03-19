@@ -3,6 +3,7 @@ package ru.practicum.explorewithme.service.category;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.model.category.Category;
@@ -10,6 +11,9 @@ import ru.practicum.explorewithme.model.category.CategoryDto;
 import ru.practicum.explorewithme.model.category.NewCategoryDto;
 import ru.practicum.explorewithme.model.exception.ObjectNotFoundException;
 import ru.practicum.explorewithme.storage.category.CategoryStorage;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -49,5 +53,17 @@ public class CategoryServiceImpl implements CategoryService {
         return mapper.convertValue(
                 categoryStorage.save(category), CategoryDto.class
         );
+    }
+
+    @Override
+    public List<CategoryDto> getCategories(Pageable pageable) {
+        return categoryStorage.findAll(pageable).stream()
+                .map(category -> mapper.convertValue(category, CategoryDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CategoryDto getCategoryById(Long id) {
+        return mapper.convertValue(categoryStorage.findById(id), CategoryDto.class);
     }
 }

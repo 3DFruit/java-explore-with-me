@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.model.CustomPageRequest;
 import ru.practicum.explorewithme.model.user.NewUserRequest;
@@ -11,11 +12,14 @@ import ru.practicum.explorewithme.model.user.UserDto;
 import ru.practicum.explorewithme.service.user.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/admin/users")
+@Validated
 public class AdminUserController {
     UserService userService;
 
@@ -25,7 +29,9 @@ public class AdminUserController {
     }
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam List<Long>ids, @RequestParam Integer from, @RequestParam Integer size) {
+    public List<UserDto> getUsers(@RequestParam List<Long>ids,
+                                  @RequestParam @PositiveOrZero Integer from,
+                                  @RequestParam @Positive Integer size) {
         log.trace("Запрошены пользователи с id {}", ids);
         return userService.getUsersByIds(ids, new CustomPageRequest(from, size, Sort.unsorted()));
     }
