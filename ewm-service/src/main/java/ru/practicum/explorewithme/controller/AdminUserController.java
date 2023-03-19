@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.model.CustomPageRequest;
 import ru.practicum.explorewithme.model.user.NewUserRequest;
 import ru.practicum.explorewithme.model.user.UserDto;
-import ru.practicum.explorewithme.service.UserService;
+import ru.practicum.explorewithme.service.user.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -25,18 +26,21 @@ public class AdminUserController {
 
     @GetMapping
     public List<UserDto> getUsers(@RequestParam List<Long>ids, @RequestParam Integer from, @RequestParam Integer size) {
+        log.trace("Запрошены пользователи с id {}", ids);
         return userService.getUsersByIds(ids, new CustomPageRequest(from, size, Sort.unsorted()));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto postUser(@RequestBody NewUserRequest userRequest) {
+    public UserDto postUser(@Valid @RequestBody NewUserRequest userRequest) {
+        log.trace("Создание пользователя: {}", userRequest);
         return userService.createUser(userRequest);
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long userId) {
+        log.trace("Удаление пользователя с id {}", userId);
         userService.deleteUser(userId);
     }
 }

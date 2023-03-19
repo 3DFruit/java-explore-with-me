@@ -1,4 +1,4 @@
-package ru.practicum.explorewithme.service;
+package ru.practicum.explorewithme.service.user;
 
 import org.springframework.data.domain.Pageable;
 import ru.practicum.explorewithme.model.user.NewUserRequest;

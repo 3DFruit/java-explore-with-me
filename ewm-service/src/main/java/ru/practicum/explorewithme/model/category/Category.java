@@ -1,4 +1,4 @@
-package ru.practicum.explorewithme.model.user;
+package ru.practicum.explorewithme.model.category;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -9,14 +9,12 @@ import javax.persistence.*;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "categories")
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    Long id;
-    @Column(unique = true)
-    String email;
-    @Column(name = "user_name", unique = true)
-    String name;
+    @Column(name = "category_id")
+    private Long id;
+    @Column(name = "category_name", unique = true)
+    private String name;
 }

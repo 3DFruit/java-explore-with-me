@@ -1,4 +1,4 @@
-package ru.practicum.explorewithme.service;
+package ru.practicum.explorewithme.service.user;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.model.user.NewUserRequest;
 import ru.practicum.explorewithme.model.user.User;
 import ru.practicum.explorewithme.model.user.UserDto;
-import ru.practicum.explorewithme.storage.UserStorage;
+import ru.practicum.explorewithme.storage.user.UserStorage;
 
 import java.util.List;
 import java.util.stream.Collectors;
