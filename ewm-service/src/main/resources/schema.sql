@@ -4,8 +4,7 @@ CREATE TABLE IF NOT EXISTS users
     email      varchar(150) NOT NULL,
     user_name  varchar(200) NOT NULL,
     CONSTRAINT users_pkey PRIMARY KEY (user_id),
-    CONSTRAINT unique_email UNIQUE (email),
-    CONSTRAINT unique_user_name UNIQUE (user_name)
+    CONSTRAINT unique_email UNIQUE (email)
 );
 
 CREATE TABLE IF NOT EXISTS categories
