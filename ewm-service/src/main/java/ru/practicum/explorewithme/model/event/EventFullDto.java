@@ -26,7 +26,7 @@ public class EventFullDto {
     LocalDateTime eventDate;
     Long id;
     @NotNull UserShortDto initiator;
-    @NotNull Location location;
+    @NotNull LocationDto location;
     @NotNull Boolean paid;
     Integer participantLimit = 0;
     LocalDateTime publishedOn;

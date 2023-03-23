@@ -1,19 +1,19 @@
 package ru.practicum.explorewithme.model.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Entity
+@Data
+@Table(name = "locations")
 public class Location {
-    @NotNull
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "location_id", nullable = false)
+    Long id;
+    @Column(name = "latitude", nullable = false)
     private Double lat;
-    @NotNull
+    @Column(name = "longitude", nullable = false)
     private Double lon;
 }

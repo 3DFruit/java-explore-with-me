@@ -3,10 +3,7 @@ package ru.practicum.explorewithme.model.event;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -24,9 +21,9 @@ public class UpdateEventAdminRequest {
     String description;
     @Future
     LocalDateTime eventDate;
-    Location location;
+    LocationDto location;
     Boolean paid;
-    @Positive Integer participantLimit;
+    @PositiveOrZero Integer participantLimit;
     Boolean requestModeration;
     AdminStateAction stateAction;
     @NotEmpty

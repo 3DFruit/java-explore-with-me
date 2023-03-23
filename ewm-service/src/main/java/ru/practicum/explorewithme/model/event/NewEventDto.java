@@ -3,7 +3,6 @@ package ru.practicum.explorewithme.model.event;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.explorewithme.model.category.CategoryDto;
-import ru.practicum.explorewithme.model.user.UserShortDto;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -22,7 +21,7 @@ public class NewEventDto {
     @Size(min = 20, max = 7000)
     String description;
     @NotNull @Future LocalDateTime eventDate;
-    @NotNull Location location;
+    @NotNull LocationDto location;
     Boolean paid = false;
     @PositiveOrZero Integer participantLimit = 0;
     Boolean requestModeration = false;
