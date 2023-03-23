@@ -19,7 +19,7 @@ public class UpdateEventUserRequest {
     @NotEmpty
     @Size(min = 20, max = 7000)
     String description;
-    @Future
+    @EventDateConstraint
     LocalDateTime eventDate;
     LocationDto location;
     Boolean paid;

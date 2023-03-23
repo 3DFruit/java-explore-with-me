@@ -1,4 +1,4 @@
-package ru.practicum.explorewithme.storage.user;
+package ru.practicum.explorewithme.storage;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

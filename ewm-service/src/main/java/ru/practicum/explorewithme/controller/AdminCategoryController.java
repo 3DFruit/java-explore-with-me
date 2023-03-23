@@ -15,11 +15,11 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/admin/categories")
 @Validated
-public class AdminCategoriesController {
+public class AdminCategoryController {
     CategoryService service;
 
     @Autowired
-    public AdminCategoriesController(CategoryService service) {
+    public AdminCategoryController(CategoryService service) {
         this.service = service;
     }
 

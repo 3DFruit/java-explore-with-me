@@ -10,7 +10,7 @@ import ru.practicum.explorewithme.model.category.Category;
 import ru.practicum.explorewithme.model.category.CategoryDto;
 import ru.practicum.explorewithme.model.category.NewCategoryDto;
 import ru.practicum.explorewithme.model.exception.ObjectNotFoundException;
-import ru.practicum.explorewithme.storage.category.CategoryStorage;
+import ru.practicum.explorewithme.storage.CategoryStorage;
 
 import java.util.List;
 import java.util.stream.Collectors;

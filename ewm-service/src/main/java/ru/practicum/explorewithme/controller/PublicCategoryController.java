@@ -17,11 +17,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 @Validated
-public class CategoriesController {
+public class PublicCategoryController {
     CategoryService service;
 
     @Autowired
-    public CategoriesController(CategoryService service) {
+    public PublicCategoryController(CategoryService service) {
         this.service = service;
     }
 

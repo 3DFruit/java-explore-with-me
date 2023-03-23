@@ -22,7 +22,7 @@ public class EventShortDto {
     CategoryDto category;
     Long confirmedRequests;
     @NotNull
-    @Future
+    @EventDateConstraint
     LocalDateTime eventDate;
     Long id;
     @NotNull

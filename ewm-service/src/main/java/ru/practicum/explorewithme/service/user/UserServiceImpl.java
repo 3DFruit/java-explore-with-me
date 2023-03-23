@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.model.user.NewUserRequest;
 import ru.practicum.explorewithme.model.user.User;
 import ru.practicum.explorewithme.model.user.UserDto;
-import ru.practicum.explorewithme.storage.user.UserStorage;
+import ru.practicum.explorewithme.storage.UserStorage;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -42,13 +42,13 @@ CREATE TABLE IF NOT EXISTS events
     CONSTRAINT events_pkey PRIMARY KEY (event_id),
     CONSTRAINT fk_event_category
         FOREIGN KEY (category_id)
-            REFERENCES categories (category_id),
+            REFERENCES categories (category_id) ON DELETE RESTRICT,
     CONSTRAINT fk_event_location
         FOREIGN KEY (location_id)
-            REFERENCES locations (location_id),
+            REFERENCES locations (location_id) ON DELETE RESTRICT,
     CONSTRAINT fk_event_initiator
         FOREIGN KEY (user_id)
-            REFERENCES users (user_id)
+            REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS requests
@@ -61,10 +61,10 @@ CREATE TABLE IF NOT EXISTS requests
     CONSTRAINT requests_pkey PRIMARY KEY (request_id),
     CONSTRAINT fk_request_event
         FOREIGN KEY (event_id)
-            REFERENCES events (event_id),
+            REFERENCES events (event_id) ON DELETE CASCADE,
     CONSTRAINT fk_request_requester
         FOREIGN KEY (user_id)
-            REFERENCES users (user_id)
+            REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS compilations
@@ -83,8 +83,8 @@ CREATE TABLE IF NOT EXISTS compilations_events
     CONSTRAINT compilations_pkey PRIMARY KEY (compilation_id),
     CONSTRAINT fk_request_event
         FOREIGN KEY (event_id)
-            REFERENCES events (event_id),
+            REFERENCES events (event_id) ON DELETE CASCADE,
     CONSTRAINT fk_request_requester
         FOREIGN KEY (compilation_id)
-            REFERENCES compilations (compilation_id)
+            REFERENCES compilations (compilation_id) ON DELETE CASCADE
 );

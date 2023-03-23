@@ -22,7 +22,7 @@ public class EventFullDto {
     LocalDateTime createdOn;
     String description;
     @NotNull
-    @Future
+    @EventDateConstraint
     LocalDateTime eventDate;
     Long id;
     @NotNull UserShortDto initiator;

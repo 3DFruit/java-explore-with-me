@@ -1,4 +1,4 @@
-package ru.practicum.explorewithme.storage.category;
+package ru.practicum.explorewithme.storage;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

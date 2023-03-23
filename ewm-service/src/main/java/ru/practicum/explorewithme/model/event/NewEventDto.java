@@ -20,7 +20,7 @@ public class NewEventDto {
     @NotNull
     @Size(min = 20, max = 7000)
     String description;
-    @NotNull @Future LocalDateTime eventDate;
+    @NotNull @EventDateConstraint LocalDateTime eventDate;
     @NotNull LocationDto location;
     Boolean paid = false;
     @PositiveOrZero Integer participantLimit = 0;
