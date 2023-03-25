@@ -2,7 +2,6 @@ package ru.practicum.explorewithme.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,7 @@ public class AdminUserController {
                                   @RequestParam @PositiveOrZero Integer from,
                                   @RequestParam @Positive Integer size) {
         log.trace("Запрошены пользователи с id {}", ids);
-        return userService.getUsersByIds(ids, new CustomPageRequest(from, size, Sort.unsorted()));
+        return userService.getUsersByIds(ids, new CustomPageRequest(from, size));
     }
 
     @PostMapping

@@ -1,16 +1,10 @@
 package ru.practicum.explorewithme.model.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class EventRequestStatusUpdateResult {
     List<ParticipationRequestDto> confirmedRequests;
     List<ParticipationRequestDto> rejectedRequests;

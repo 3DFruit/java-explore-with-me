@@ -6,10 +6,7 @@ import lombok.experimental.FieldDefaults;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateEventAdminRequest {
     @NotEmpty

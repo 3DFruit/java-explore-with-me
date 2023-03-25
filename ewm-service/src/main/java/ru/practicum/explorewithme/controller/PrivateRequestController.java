@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.model.request.ParticipationRequestDto;
+import ru.practicum.explorewithme.service.request.RequestService;
 
 import java.util.List;
 
@@ -13,19 +14,28 @@ import java.util.List;
 @RequestMapping("/users/{userId}/requests")
 @Validated
 public class PrivateRequestController {
+    RequestService requestService;
+
+    public PrivateRequestController(RequestService requestService) {
+        this.requestService = requestService;
+    }
+
     @GetMapping
     public List<ParticipationRequestDto> getRequestsOfUser(@PathVariable Long userId) {
-        return null;
+        log.trace("Информация о заявках пользователя с id {}", userId);
+        return requestService.getRequestsOfUser(userId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto postRequest(@PathVariable Long userId, @RequestParam Long eventId) {
-        return null;
+        log.trace("Создание о заявки на событие {} от пользователя {}", eventId, userId);
+        return requestService.createRequest(userId, eventId);
     }
 
     @PatchMapping("/{requestId}")
     public ParticipationRequestDto patchRequest(@PathVariable Long userId, @PathVariable Long requestId) {
-        return null;
+        log.trace("Отмена запроса на участие {} от пользователя {}", requestId, userId);
+        return requestService.cancelRequest(userId, requestId);
     }
 }

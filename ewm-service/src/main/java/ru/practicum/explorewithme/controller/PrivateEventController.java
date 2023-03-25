@@ -1,9 +1,11 @@
 package ru.practicum.explorewithme.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.explorewithme.model.CustomPageRequest;
 import ru.practicum.explorewithme.model.event.EventFullDto;
 import ru.practicum.explorewithme.model.event.EventShortDto;
 import ru.practicum.explorewithme.model.event.NewEventDto;
@@ -11,6 +13,8 @@ import ru.practicum.explorewithme.model.event.UpdateEventUserRequest;
 import ru.practicum.explorewithme.model.request.EventRequestStatusUpdateRequest;
 import ru.practicum.explorewithme.model.request.EventRequestStatusUpdateResult;
 import ru.practicum.explorewithme.model.request.ParticipationRequestDto;
+import ru.practicum.explorewithme.service.event.EventService;
+import ru.practicum.explorewithme.service.request.RequestService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -22,38 +26,53 @@ import java.util.List;
 @RequestMapping("/users/{userId}/events")
 @Validated
 public class PrivateEventController {
+    EventService eventService;
+    RequestService requestService;
+
+    @Autowired
+    public PrivateEventController(EventService eventService, RequestService requestService) {
+        this.eventService = eventService;
+        this.requestService = requestService;
+    }
+
     @GetMapping
     public List<EventShortDto> getEventsOfUser(@PathVariable Long userId,
                                                @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
                                                @RequestParam(defaultValue = "10") @Positive Integer size) {
-        return null;
+        log.trace("Запрошены события пользователя {}", userId);
+        return eventService.getEventsOfUser(userId, new CustomPageRequest(from, size));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto createEvent(@PathVariable Long userId, @RequestBody @Valid NewEventDto eventDto) {
-        return null;
+        log.trace("Создание события от пользователя {} : {}", userId, eventDto);
+        return eventService.createEvent(userId, eventDto);
     }
 
     @GetMapping("/{eventId}")
     public EventFullDto getEventById(@PathVariable Long userId, @PathVariable Long eventId) {
-        return null;
+        log.trace("Запрос информации о событии {} от пользователя {}", eventId, userId);
+        return eventService.getEventById(userId, eventId);
     }
 
     @PatchMapping("/{eventId}")
     public EventFullDto patchEvent(@PathVariable Long userId, @PathVariable Long eventId,
                                    @RequestBody @Valid UpdateEventUserRequest userRequest) {
-        return null;
+        log.trace("Обновление информации о событии {}", eventId);
+        return eventService.patchEvent(userId, eventId, userRequest);
     }
 
     @GetMapping("/{eventId}/requests")
     public List<ParticipationRequestDto> getRequestsOfEvent(@PathVariable Long userId, @PathVariable Long eventId) {
-        return null;
+        log.trace("Запрос списка заявок на событие {}", eventId);
+        return requestService.getRequestsOfEvent(userId, eventId);
     }
 
     @GetMapping("/{eventId}/requests")
     public EventRequestStatusUpdateResult patchRequestsOfEvent(@PathVariable Long userId, @PathVariable Long eventId,
                                                                @RequestBody EventRequestStatusUpdateRequest request) {
-        return null;
+        log.trace("Изменение статуса заявок на событие {}: {}", eventId, request);
+        return requestService.patchRequestsOfEvent(userId, eventId, request);
     }
 }

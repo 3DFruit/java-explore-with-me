@@ -28,11 +28,13 @@ public class PublicCategoryController {
     @GetMapping
     public List<CategoryDto> getCategories(@RequestParam @PositiveOrZero Integer from,
                                            @RequestParam @Positive Integer size) {
+        log.trace("Запрос категорий");
         return service.getCategories(new CustomPageRequest(from, size, Sort.unsorted()));
     }
 
     @GetMapping("/{catId}")
     public CategoryDto getCategory(@PathVariable Long catId) {
+        log.trace("Запрос категории {}", catId);
         return service.getCategoryById(catId);
     }
 }

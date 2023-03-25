@@ -1,7 +1,5 @@
 package ru.practicum.explorewithme.model.request;
 
-import ru.practicum.explorewithme.model.event.EventState;
-
 import java.util.Optional;
 
 public enum RequestUserState {
@@ -12,8 +10,8 @@ public enum RequestUserState {
         return this.name();
     }
 
-    public static Optional<EventState> from(String state) {
-        for (ru.practicum.explorewithme.model.event.EventState value : ru.practicum.explorewithme.model.event.EventState.values()) {
+    public static Optional<RequestUserState> from(String state) {
+        for (RequestUserState value : RequestUserState.values()) {
             if (value.name().equalsIgnoreCase(state)) {
                 return Optional.of(value);
             }

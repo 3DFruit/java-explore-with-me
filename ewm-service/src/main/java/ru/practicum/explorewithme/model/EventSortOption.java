@@ -1,7 +1,5 @@
 package ru.practicum.explorewithme.model;
 
-import ru.practicum.explorewithme.model.event.EventState;
-
 import java.util.Optional;
 
 public enum EventSortOption {
@@ -12,8 +10,8 @@ public enum EventSortOption {
         return this.name();
     }
 
-    public static Optional<EventState> from(String state) {
-        for (EventState value : EventState.values()) {
+    public static Optional<EventSortOption> from(String state) {
+        for (EventSortOption value : EventSortOption.values()) {
             if (value.name().equalsIgnoreCase(state)) {
                 return Optional.of(value);
             }

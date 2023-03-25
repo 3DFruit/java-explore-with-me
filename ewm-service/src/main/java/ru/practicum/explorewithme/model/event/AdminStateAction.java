@@ -10,8 +10,8 @@ public enum AdminStateAction {
         return this.name();
     }
 
-    public static Optional<EventState> from(String state) {
-        for (EventState value : EventState.values()) {
+    public static Optional<AdminStateAction> from(String state) {
+        for (AdminStateAction value : AdminStateAction.values()) {
             if (value.name().equalsIgnoreCase(state)) {
                 return Optional.of(value);
             }

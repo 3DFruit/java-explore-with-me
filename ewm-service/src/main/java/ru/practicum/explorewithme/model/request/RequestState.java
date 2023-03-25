@@ -10,8 +10,8 @@ public enum RequestState {
         return this.name();
     }
 
-    public static Optional<ru.practicum.explorewithme.model.event.EventState> from(String state) {
-        for (ru.practicum.explorewithme.model.event.EventState value : ru.practicum.explorewithme.model.event.EventState.values()) {
+    public static Optional<RequestState> from(String state) {
+        for (RequestState value : RequestState.values()) {
             if (value.name().equalsIgnoreCase(state)) {
                 return Optional.of(value);
             }

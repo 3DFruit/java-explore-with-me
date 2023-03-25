@@ -5,15 +5,11 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.explorewithme.model.category.CategoryDto;
 import ru.practicum.explorewithme.model.user.UserShortDto;
 
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventShortDto {
     @NotBlank
