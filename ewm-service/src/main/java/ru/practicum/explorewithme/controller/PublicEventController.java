@@ -47,22 +47,28 @@ public class PublicEventController {
                                                   HttpServletRequest request) {
         log.trace("Поиск опубликованного события: текст = '{}', категории {}, платные {} за период {}-{} только доступные {}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
-        EventSortOption sortOption = EventSortOption.from(sort).orElseThrow(() -> {
-            throw new ConvertationException("Не удалось найти EventSortOption " + sort);
-        });
-        Sort eventSort;
-        switch (sortOption) {
-            case EVENT_DATE:
-                eventSort = Sort.by("event_date").ascending();
-                break;
-            case VIEWS:
-            default:
-                eventSort = Sort.unsorted();
+        EventSortOption sortOption = null;
+        if (sort != null) {
+            sortOption = EventSortOption.from(sort).orElseThrow(() -> {
+                throw new ConvertationException("Не удалось найти EventSortOption " + sort);
+            });
+        }
+        Sort eventSort = Sort.unsorted();
+        if (sortOption != null) {
+            switch (sortOption) {
+                case EVENT_DATE:
+                    eventSort = Sort.by("event_date").ascending();
+                    break;
+                case VIEWS:
+                default:
+                    eventSort = Sort.unsorted();
+            }
         }
         List<EventShortDto> result = eventService.getPublishedEvents(text, categories, paid,
-                LocalDateTime.parse(rangeStart), LocalDateTime.parse(rangeEnd), onlyAvailable,
+                rangeStart != null ? LocalDateTime.parse(rangeStart, CommonUtils.DATE_TIME_FORMATTER) : null,
+                rangeEnd != null ? LocalDateTime.parse(rangeEnd, CommonUtils.DATE_TIME_FORMATTER) : null, onlyAvailable,
                 new CustomPageRequest(from, size, eventSort));
-        client.writeStat("ewm-main-service", request.getContextPath(), request.getRemoteAddr(), LocalDateTime.now()).subscribe();
+        client.writeStat("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()).block();
         return result;
     }
 
@@ -70,7 +76,7 @@ public class PublicEventController {
     public EventFullDto getPublishedEventById(@PathVariable Long id, HttpServletRequest request) {
         log.trace("Запрос опубликованного события {}", id);
         EventFullDto result = eventService.getPublishedEventById(id);
-        client.writeStat("ewm-main-service", request.getContextPath(), request.getRemoteAddr(), LocalDateTime.now()).subscribe();
+        client.writeStat("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()).block();
         return result;
     }
 }

@@ -41,6 +41,8 @@ CREATE TABLE IF NOT EXISTS events
     request_moderation  boolean DEFAULT false,
     state               varchar(12)   NOT NULL,
     CONSTRAINT events_pkey PRIMARY KEY (event_id),
+    CONSTRAINT correct_event_date
+        CHECK (event_date > NOW() + interval '2' HOUR),
     CONSTRAINT fk_event_category
         FOREIGN KEY (category_id)
             REFERENCES categories (category_id) ON DELETE RESTRICT,

@@ -23,7 +23,6 @@ public class NewEventDto {
     @Size(min = 20, max = 7000)
     String description;
     @NotNull
-    @EventDateConstraint
     @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
     LocalDateTime eventDate;
     @NotNull LocationDto location;

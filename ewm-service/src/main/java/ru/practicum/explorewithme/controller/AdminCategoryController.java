@@ -38,7 +38,7 @@ public class AdminCategoryController {
     }
 
     @PatchMapping("/{catId}")
-    public CategoryDto patchCategory(@PathVariable Long catId, @RequestBody CategoryDto dto) {
+    public CategoryDto patchCategory(@PathVariable Long catId, @RequestBody @Valid CategoryDto dto) {
         log.trace("Обновление категории с id {}", catId);
         return service.patchCategory(catId, dto);
     }

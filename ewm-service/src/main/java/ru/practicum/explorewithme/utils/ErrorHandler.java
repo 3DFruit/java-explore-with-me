@@ -1,12 +1,17 @@
 package ru.practicum.explorewithme.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.explorewithme.model.exception.AdminUpdateStatusException;
 import ru.practicum.explorewithme.model.exception.ObjectNotFoundException;
+import ru.practicum.explorewithme.model.exception.RequestCreationException;
+import ru.practicum.explorewithme.model.exception.UserUpdateStatusException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -15,9 +20,10 @@ import java.time.LocalDateTime;
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class,
+            MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleValidationException(final MethodArgumentNotValidException e) {
+    public ApiError handleValidationException(final RuntimeException e) {
         log.error("Ошибка запроса: {}", e.getMessage(), e);
         return new ApiError(e.getMessage(),
                 "Ошибка запроса",
@@ -33,6 +39,20 @@ public class ErrorHandler {
         return new ApiError(e.getMessage(),
                 "Запрашиваемый объект не найден",
                 HttpStatus.NOT_FOUND.name(),
+                LocalDateTime.now().format(CommonUtils.DATE_TIME_FORMATTER),
+                getErrors(e));
+    }
+
+    @ExceptionHandler({DataIntegrityViolationException.class,
+            AdminUpdateStatusException.class,
+            UserUpdateStatusException.class,
+            RequestCreationException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDataIntegrityViolationException(final Exception e) {
+        log.error("Нарушение правил цолостности БД {}", e.getMessage(), e);
+        return new ApiError(e.getMessage(),
+                "Нарушение правил цолостности БД",
+                HttpStatus.CONFLICT.name(),
                 LocalDateTime.now().format(CommonUtils.DATE_TIME_FORMATTER),
                 getErrors(e));
     }

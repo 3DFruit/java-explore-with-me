@@ -33,7 +33,7 @@ public class PrivateRequestController {
         return requestService.createRequest(userId, eventId);
     }
 
-    @PatchMapping("/{requestId}")
+    @PatchMapping("/{requestId}/cancel")
     public ParticipationRequestDto patchRequest(@PathVariable Long userId, @PathVariable Long requestId) {
         log.trace("Отмена запроса на участие {} от пользователя {}", requestId, userId);
         return requestService.cancelRequest(userId, requestId);

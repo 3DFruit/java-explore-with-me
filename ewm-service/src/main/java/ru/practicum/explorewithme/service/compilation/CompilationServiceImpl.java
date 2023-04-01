@@ -27,8 +27,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto compilationDto) {
-        List<Event> events = eventStorage.findAllById(compilationDto.getEvents().stream()
-                .map(EventShortDto::getId).collect(Collectors.toList()));
+        List<Event> events = eventStorage.findAllById(compilationDto.getEvents());
         List<EventShortDto> shortDtos = events.stream()
                 .map(eventMapper::toEventShortDto).collect(Collectors.toList());
         return mapper.toCompilationDto(compilationStorage.save(mapper.newDtoToCompilation(compilationDto, events)), shortDtos);
@@ -52,8 +51,7 @@ public class CompilationServiceImpl implements CompilationService {
             compilation.setTitle(request.getTitle());
         }
         if (request.getEvents() != null && !request.getEvents().isEmpty()) {
-            compilation.setEvents(eventStorage.findAllById(request.getEvents().stream()
-                    .map(EventShortDto::getId).collect(Collectors.toList())));
+            compilation.setEvents(eventStorage.findAllById(request.getEvents()));
         }
         List<EventShortDto> shortDtos = compilation.getEvents().stream()
                 .map(eventMapper::toEventShortDto).collect(Collectors.toList());

@@ -31,7 +31,7 @@ public class StatisticsClient {
         return client
                 .post()
                 .uri("/hit")
-                .body(new EndpointHitDto(null, app, uri, ip, timestamp), EndpointHitDto.class)
+                .bodyValue(new EndpointHitDto(null, app, uri, ip, timestamp))
                 .retrieve()
                 .bodyToMono(EndpointHitDto.class);
     }

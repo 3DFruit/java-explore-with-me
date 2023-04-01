@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.explorewithme.utils.CommonUtils;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -14,14 +13,11 @@ import java.time.LocalDateTime;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateEventUserRequest {
-    @NotEmpty
     @Size(min = 20, max = 2000)
     String annotation;
     Long category;
-    @NotEmpty
     @Size(min = 20, max = 7000)
     String description;
-    @EventDateConstraint
     @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
     LocalDateTime eventDate;
     LocationDto location;
@@ -29,7 +25,6 @@ public class UpdateEventUserRequest {
     @PositiveOrZero Integer participantLimit;
     Boolean requestModeration;
     UserStateAction stateAction;
-    @NotEmpty
     @Size(min = 3, max = 120)
     String title;
 }

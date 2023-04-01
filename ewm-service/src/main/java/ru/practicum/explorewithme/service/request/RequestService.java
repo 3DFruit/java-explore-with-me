@@ -1,12 +1,9 @@
 package ru.practicum.explorewithme.service.request;
 
-import ru.practicum.explorewithme.model.event.Event;
 import ru.practicum.explorewithme.model.request.EventRequestStatusUpdateRequest;
 import ru.practicum.explorewithme.model.request.EventRequestStatusUpdateResult;
 import ru.practicum.explorewithme.model.request.ParticipationRequestDto;
-import ru.practicum.explorewithme.model.request.Request;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface RequestService {
@@ -20,6 +17,4 @@ public interface RequestService {
 
     EventRequestStatusUpdateResult patchRequestsOfEvent(Long userId, Long eventId,
                                                         EventRequestStatusUpdateRequest request);
-
-    List<Request> getApprovedRequests(Collection<Event> events);
 }

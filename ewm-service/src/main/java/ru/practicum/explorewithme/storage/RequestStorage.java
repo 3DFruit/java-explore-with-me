@@ -15,5 +15,5 @@ public interface RequestStorage extends JpaRepository<Request, Long> {
 
     List<Request> findByEvent(Event event);
 
-    List<Request> findByEventIn(Collection<Event> events);
+    List<Request> findByEventIdIn(Collection<Long> events);
 }

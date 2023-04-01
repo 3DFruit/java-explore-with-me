@@ -17,11 +17,7 @@ import ru.practicum.explorewithme.model.exception.UserUpdateStatusException;
 import ru.practicum.explorewithme.model.request.QRequest;
 import ru.practicum.explorewithme.model.request.Request;
 import ru.practicum.explorewithme.model.user.User;
-import ru.practicum.explorewithme.service.request.RequestService;
-import ru.practicum.explorewithme.storage.CategoryStorage;
-import ru.practicum.explorewithme.storage.EventStorage;
-import ru.practicum.explorewithme.storage.LocationStorage;
-import ru.practicum.explorewithme.storage.UserStorage;
+import ru.practicum.explorewithme.storage.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -37,8 +33,7 @@ public class EventServiceImpl implements EventService {
     private final LocationStorage locationStorage;
     private final StatisticsClient client;
     private final EventMapper mapper;
-    private final LocationMapper locationMapper;
-    private final RequestService requestService;
+    private final RequestStorage requestStorage;
 
     @Override
     public List<EventFullDto> getEvents(List<Long> users,
@@ -86,7 +81,11 @@ public class EventServiceImpl implements EventService {
             event.setEventDate(adminRequest.getEventDate());
         }
         if (adminRequest.getLocation() != null) {
-            event.setLocation(locationMapper.toLocation(adminRequest.getLocation()));
+            LocationDto locationDto = adminRequest.getLocation();
+            Location location = locationStorage.findByLatAndLon(locationDto.getLat(), locationDto.getLon()).orElse(
+                    locationStorage.save(new Location(locationDto.getLat(), locationDto.getLon()))
+            );
+            event.setLocation(location);
         }
         if (adminRequest.getPaid() != null) {
             event.setPaid(adminRequest.getPaid());
@@ -115,14 +114,15 @@ public class EventServiceImpl implements EventService {
                     event.setState(EventState.PUBLISHED);
             }
         }
-        return mapper.toEventFullDto(setConfirmedRequestAndViews(eventStorage.save(event)));
+        eventStorage.save(event);
+        return mapper.toEventFullDto(setConfirmedRequestAndViews(event));
     }
 
     @Override
     public List<EventShortDto> getEventsOfUser(Long userId, Pageable pageable) {
         User user = userStorage.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден пользователь с id " + userId));
-        List<Event> events = setViews(eventStorage.findByInitiator(user, pageable).getContent());
+        List<Event> events = setConfirmedRequestsAndViews(eventStorage.findByInitiator(user, pageable).getContent());
         return events.stream().map(mapper::toEventShortDto).collect(Collectors.toList());
     }
 
@@ -173,6 +173,9 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден пользователь с id " + userId));
         Event event = eventStorage.findByIdAndInitiator(eventId, user)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найдено событие с id " + eventId));
+        if (event.getState() != EventState.CANCELED && event.getState() != EventState.PENDING) {
+            throw new UserUpdateStatusException("Изменить статус можно только из статусов PENDING и CANCELED");
+        }
         if (userRequest.getAnnotation() != null) {
             event.setAnnotation(userRequest.getAnnotation());
         }
@@ -188,7 +191,11 @@ public class EventServiceImpl implements EventService {
             event.setEventDate(userRequest.getEventDate());
         }
         if (userRequest.getLocation() != null) {
-            event.setLocation(locationMapper.toLocation(userRequest.getLocation()));
+            LocationDto locationDto = userRequest.getLocation();
+            Location location = locationStorage.findByLatAndLon(locationDto.getLat(), locationDto.getLon()).orElse(
+                    locationStorage.save(new Location(locationDto.getLat(), locationDto.getLon()))
+            );
+            event.setLocation(location);
         }
         if (userRequest.getPaid() != null) {
             event.setPaid(userRequest.getPaid());
@@ -202,10 +209,8 @@ public class EventServiceImpl implements EventService {
         if (userRequest.getTitle() != null) {
             event.setTitle(userRequest.getTitle());
         }
+
         if (userRequest.getStateAction() != null) {
-            if (event.getState() != EventState.CANCELED && event.getState() != EventState.PENDING) {
-                throw new UserUpdateStatusException("Изменить статус можно только из статусов PENDING и CANCELED");
-            }
             switch (userRequest.getStateAction()) {
                 case CANCEL_REVIEW:
                     event.setState(EventState.CANCELED);
@@ -242,7 +247,7 @@ public class EventServiceImpl implements EventService {
         } else {
             booleanBuilder.and(QEvent.event.eventDate.after(LocalDateTime.now()));
         }
-        if (onlyAvailable) {
+        if (onlyAvailable != null && onlyAvailable) {
             BooleanExpression withoutLimit = QEvent.event.participantLimit.eq(0);
             BooleanExpression withLimitAvailable = QEvent.event.participantLimit.gt(
                     JPAExpressions.select(QRequest.request.count())
@@ -251,7 +256,9 @@ public class EventServiceImpl implements EventService {
             );
             booleanBuilder.and(withoutLimit.or(withLimitAvailable));
         }
-        List<Event> events = setViews(eventStorage.findAll(booleanBuilder, pageable).getContent());
+        List<Event> events = new ArrayList<>();
+        eventStorage.findAll(booleanBuilder).forEach(events::add);
+        events = setConfirmedRequestsAndViews(events);
         return events.stream().map(mapper::toEventShortDto).collect(Collectors.toList());
     }
 
@@ -260,6 +267,13 @@ public class EventServiceImpl implements EventService {
         Event event = eventStorage.findByIdAndState(id, EventState.PUBLISHED)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найдено событие с id " + id));
         return mapper.toEventFullDto(setConfirmedRequestAndViews(event));
+    }
+
+    @Override
+    public Event getEventById(Long eventId) {
+        Event event = eventStorage.findById(eventId)
+                .orElseThrow(() -> new ObjectNotFoundException("Не найдено событие с id " + eventId));
+        return setConfirmedRequestAndViews(event);
     }
 
     private Event setConfirmedRequestAndViews(Event event) {
@@ -276,7 +290,8 @@ public class EventServiceImpl implements EventService {
         if (events == null || events.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Request> requests = requestService.getApprovedRequests(events);
+        List<Request> requests = requestStorage.findByEventIdIn(events.stream()
+                .map(Event::getId).collect(Collectors.toList()));
         return events.stream()
                 .peek(event -> event.setConfirmedRequests(
                         requests.stream()

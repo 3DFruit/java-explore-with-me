@@ -33,4 +33,6 @@ public interface EventService {
                                            Pageable pageable);
 
     EventFullDto getPublishedEventById(Long id);
+
+    Event getEventById(Long eventId);
 }

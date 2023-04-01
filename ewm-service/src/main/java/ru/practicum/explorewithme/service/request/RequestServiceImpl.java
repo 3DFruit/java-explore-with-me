@@ -8,12 +8,11 @@ import ru.practicum.explorewithme.model.event.EventState;
 import ru.practicum.explorewithme.model.exception.*;
 import ru.practicum.explorewithme.model.request.*;
 import ru.practicum.explorewithme.model.user.User;
-import ru.practicum.explorewithme.storage.EventStorage;
+import ru.practicum.explorewithme.service.event.EventService;
 import ru.practicum.explorewithme.storage.RequestStorage;
 import ru.practicum.explorewithme.storage.UserStorage;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 public class RequestServiceImpl implements RequestService {
     private final RequestStorage requestStorage;
     private final UserStorage userStorage;
-    private final EventStorage eventStorage;
+    private final EventService eventService;
     private final RequestMapper mapper;
 
     @Override
@@ -40,22 +39,21 @@ public class RequestServiceImpl implements RequestService {
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
         User user = userStorage.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден пользователь с id " + userId));
-        Event event = eventStorage.findById(eventId)
-                .orElseThrow(() -> new ObjectNotFoundException("Не найдено событие с id " + eventId));
+        Event event = eventService.getEventById(eventId);
         if (event.getState() != EventState.PUBLISHED) {
             throw new RequestCreationException("Нельзя создать запрос на неопубликованное событие");
         }
         if (event.getInitiator().equals(user)) {
             throw new RequestCreationException("Инициатор не может оставить запрос на свое событие");
         }
-        if (event.getParticipantLimit() <= event.getConfirmedRequests()) {
-            throw new RequestCreationException("Не осталось свободных мест в данном событии");
-        }
         Request request = new Request();
         request.setRequester(user);
         request.setEvent(event);
-        request.setStatus(event.getRequestModeration() ? RequestState.PENDING : RequestState.APPROVED);
+        request.setStatus(event.getRequestModeration() ? RequestState.PENDING : RequestState.CONFIRMED);
         request.setCreated(LocalDateTime.now());
+        if (event.getParticipantLimit() <= event.getConfirmedRequests()) {
+            throw new RequestCreationException("Не осталось свободных мест в данном событии");
+        }
         return mapper.toParticipationRequestDto(requestStorage.save(request));
     }
 
@@ -77,8 +75,7 @@ public class RequestServiceImpl implements RequestService {
     public List<ParticipationRequestDto> getRequestsOfEvent(Long userId, Long eventId) {
         User user = userStorage.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден пользователь с id " + userId));
-        Event event = eventStorage.findById(eventId)
-                .orElseThrow(() -> new ObjectNotFoundException("Не найдено событие с id " + eventId));
+        Event event = eventService.getEventById(eventId);
         if (!event.getInitiator().equals(user)) {
             throw new PermissionException("Событие создано другим пользователем");
         }
@@ -92,8 +89,7 @@ public class RequestServiceImpl implements RequestService {
     public EventRequestStatusUpdateResult patchRequestsOfEvent(Long userId, Long eventId, EventRequestStatusUpdateRequest request) {
         User user = userStorage.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден пользователь с id " + userId));
-        Event event = eventStorage.findById(eventId)
-                .orElseThrow(() -> new ObjectNotFoundException("Не найдено событие с id " + eventId));
+        Event event = eventService.getEventById(eventId);
         if (!event.getInitiator().equals(user)) {
             throw new PermissionException("Событие создано другим пользователем");
         }
@@ -113,8 +109,9 @@ public class RequestServiceImpl implements RequestService {
                     updateResult.addRejectedRequest(mapper.toParticipationRequestDto(req));
                     break;
                 case CONFIRMED:
-                    if (event.getParticipantLimit() <= event.getConfirmedRequests()) {
-                        req.setStatus(RequestState.APPROVED);
+                    if (event.getParticipantLimit() == 0
+                            || event.getParticipantLimit() > event.getConfirmedRequests()) {
+                        req.setStatus(RequestState.CONFIRMED);
                         updateResult.addConfirmedRequest(mapper.toParticipationRequestDto(req));
                     } else {
                         req.setStatus(RequestState.REJECTED);
@@ -124,10 +121,5 @@ public class RequestServiceImpl implements RequestService {
             requestStorage.save(req);
         }
         return updateResult;
-    }
-
-    @Override
-    public List<Request> getApprovedRequests(Collection<Event> events) {
-        return requestStorage.findByEventIn(events);
     }
 }

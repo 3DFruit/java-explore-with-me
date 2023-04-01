@@ -10,6 +10,7 @@ import ru.practicum.explorewithme.model.event.UpdateEventAdminRequest;
 import ru.practicum.explorewithme.service.event.EventService;
 import ru.practicum.explorewithme.utils.CommonUtils;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
@@ -37,12 +38,13 @@ public class AdminEventController {
                                         @RequestParam(defaultValue = CommonUtils.PAGINATION_DEFAULT_SIZE) @Positive Integer size) {
         log.trace("Запрос событий от пользователей {} в состояниях {} c категориями {} за период {}-{}",
                 users, states, categories, rangeStart, rangeEnd);
-        return eventService.getEvents(users, states, categories, LocalDateTime.parse(rangeStart),
-                LocalDateTime.parse(rangeEnd), new CustomPageRequest(from, size));
+        return eventService.getEvents(users, states, categories,
+                rangeStart != null ? LocalDateTime.parse(rangeStart, CommonUtils.DATE_TIME_FORMATTER) : null,
+                rangeEnd != null ? LocalDateTime.parse(rangeEnd, CommonUtils.DATE_TIME_FORMATTER) : null, new CustomPageRequest(from, size));
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto updateEvent(@PathVariable Long eventId, @RequestBody UpdateEventAdminRequest adminRequest) {
+    public EventFullDto updateEvent(@PathVariable Long eventId, @RequestBody @Valid UpdateEventAdminRequest adminRequest) {
         log.trace("Обновление события с id - {}", eventId);
         return eventService.updateEvent(eventId, adminRequest);
     }
