@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface UserService {
     List<UserDto> getUsersByIds(List<Long> ids, Pageable pageable);
+
     UserDto createUser(NewUserRequest userRequest);
+
     void deleteUser(Long userId);
 }

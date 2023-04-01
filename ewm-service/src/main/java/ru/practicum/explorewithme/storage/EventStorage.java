@@ -14,6 +14,8 @@ import java.util.Optional;
 @Repository
 public interface EventStorage extends JpaRepository<Event, Long>, QuerydslPredicateExecutor<Event> {
     Optional<Event> findByIdAndState(Long id, EventState state);
+
     Optional<Event> findByIdAndInitiator(Long id, User initiator);
+
     Page<Event> findByInitiator(User user, Pageable pageable);
 }

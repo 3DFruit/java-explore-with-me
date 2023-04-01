@@ -5,11 +5,6 @@ import java.util.Optional;
 public enum EventState {
     PENDING, PUBLISHED, CANCELED;
 
-    @Override
-    public String toString() {
-        return this.name();
-    }
-
     public static Optional<EventState> from(String state) {
         for (EventState value : EventState.values()) {
             if (value.name().equalsIgnoreCase(state)) {
@@ -17,5 +12,10 @@ public enum EventState {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public String toString() {
+        return this.name();
     }
 }

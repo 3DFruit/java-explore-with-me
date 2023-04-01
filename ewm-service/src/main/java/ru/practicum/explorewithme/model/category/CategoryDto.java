@@ -1,6 +1,6 @@
 package ru.practicum.explorewithme.model.category;
 
-import lombok.*;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 

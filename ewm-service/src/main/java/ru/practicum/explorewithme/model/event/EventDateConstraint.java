@@ -10,6 +10,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EventDateConstraint {
     String message() default "Начало должны быть не ранее, чем через 2 часа от момента создания";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

@@ -5,11 +5,6 @@ import java.util.Optional;
 public enum AdminStateAction {
     PUBLISH_EVENT, REJECT_EVENT;
 
-    @Override
-    public String toString() {
-        return this.name();
-    }
-
     public static Optional<AdminStateAction> from(String state) {
         for (AdminStateAction value : AdminStateAction.values()) {
             if (value.name().equalsIgnoreCase(state)) {
@@ -17,5 +12,10 @@ public enum AdminStateAction {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public String toString() {
+        return this.name();
     }
 }

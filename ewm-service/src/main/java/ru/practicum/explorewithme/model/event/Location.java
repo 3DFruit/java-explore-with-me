@@ -20,6 +20,7 @@ public class Location {
     public Location() {
 
     }
+
     public Location(Double lat, Double lon) {
         this.lat = lat;
         this.lon = lon;

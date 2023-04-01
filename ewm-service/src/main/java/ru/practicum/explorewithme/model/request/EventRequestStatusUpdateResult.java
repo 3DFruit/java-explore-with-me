@@ -1,6 +1,6 @@
 package ru.practicum.explorewithme.model.request;
 
-import lombok.*;
+import lombok.Data;
 
 import java.util.List;
 

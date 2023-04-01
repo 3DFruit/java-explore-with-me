@@ -1,6 +1,6 @@
 package ru.practicum.explorewithme.model.compilation;
 
-import lombok.*;
+import lombok.Data;
 import ru.practicum.explorewithme.model.event.EventShortDto;
 
 import java.util.List;

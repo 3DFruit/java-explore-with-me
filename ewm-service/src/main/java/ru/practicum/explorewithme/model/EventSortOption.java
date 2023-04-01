@@ -5,11 +5,6 @@ import java.util.Optional;
 public enum EventSortOption {
     EVENT_DATE, VIEWS;
 
-    @Override
-    public String toString() {
-        return this.name();
-    }
-
     public static Optional<EventSortOption> from(String state) {
         for (EventSortOption value : EventSortOption.values()) {
             if (value.name().equalsIgnoreCase(state)) {
@@ -17,5 +12,10 @@ public enum EventSortOption {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public String toString() {
+        return this.name();
     }
 }
