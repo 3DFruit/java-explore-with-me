@@ -9,6 +9,7 @@ import ru.practicum.explorewithme.model.CustomPageRequest;
 import ru.practicum.explorewithme.model.user.NewUserRequest;
 import ru.practicum.explorewithme.model.user.UserDto;
 import ru.practicum.explorewithme.service.user.UserService;
+import ru.practicum.explorewithme.utils.CommonUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -28,9 +29,9 @@ public class AdminUserController {
     }
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam List<Long>ids,
-                                  @RequestParam @PositiveOrZero Integer from,
-                                  @RequestParam @Positive Integer size) {
+    public List<UserDto> getUsers(@RequestParam List<Long> ids,
+                                  @RequestParam(defaultValue = CommonUtils.PAGINATION_DEFAULT_FROM) @PositiveOrZero Integer from,
+                                  @RequestParam(defaultValue = CommonUtils.PAGINATION_DEFAULT_SIZE) @Positive Integer size) {
         log.trace("Запрошены пользователи с id {}", ids);
         return userService.getUsersByIds(ids, new CustomPageRequest(from, size));
     }

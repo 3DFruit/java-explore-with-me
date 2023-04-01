@@ -1,10 +1,15 @@
 package ru.practicum.explorewithme.model.event;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AccessLevel;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.explorewithme.model.category.CategoryDto;
+import ru.practicum.explorewithme.utils.CommonUtils;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,11 +18,14 @@ public class NewEventDto {
     @NotBlank
     @Size(min = 20, max = 2000)
     String annotation;
-    @NotNull CategoryDto category;
+    @NotNull Long category;
     @NotNull
     @Size(min = 20, max = 7000)
     String description;
-    @NotNull @EventDateConstraint LocalDateTime eventDate;
+    @NotNull
+    @EventDateConstraint
+    @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
+    LocalDateTime eventDate;
     @NotNull LocationDto location;
     Boolean paid = false;
     @PositiveOrZero Integer participantLimit = 0;

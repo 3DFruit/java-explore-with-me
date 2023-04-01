@@ -3,6 +3,8 @@ package ru.practicum.explorewithme.model.request;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.explorewithme.model.event.Event;
+import ru.practicum.explorewithme.model.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,10 +20,12 @@ public class Request {
     Long id;
     @Column(name = "created", nullable = false)
     LocalDateTime created;
-    @Column(name = "event_id", nullable = false)
-    Long event;
-    @Column(name = "user_id", nullable = false)
-    Long requester;
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    Event event;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User requester;
     @Column(name = "status", nullable = false)
     RequestState status;
 }

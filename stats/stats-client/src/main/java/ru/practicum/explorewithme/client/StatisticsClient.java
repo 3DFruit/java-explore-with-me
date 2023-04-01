@@ -27,11 +27,11 @@ public class StatisticsClient {
                 .build();
     }
 
-    public Mono<EndpointHitDto> writeStat(EndpointHitDto dto) {
+    public Mono<EndpointHitDto> writeStat(String app, String uri, String ip, LocalDateTime timestamp) {
         return client
                 .post()
                 .uri("/hit")
-                .body(dto, EndpointHitDto.class)
+                .body(new EndpointHitDto(null, app, uri, ip, timestamp), EndpointHitDto.class)
                 .retrieve()
                 .bodyToMono(EndpointHitDto.class);
     }

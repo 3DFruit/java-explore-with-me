@@ -1,7 +1,10 @@
 package ru.practicum.explorewithme.model.request;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AccessLevel;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.explorewithme.utils.CommonUtils;
 
 import java.time.LocalDateTime;
 
@@ -9,6 +12,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ParticipationRequestDto {
     Long id;
+    @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
     LocalDateTime created;
     Long event;
     Long requester;

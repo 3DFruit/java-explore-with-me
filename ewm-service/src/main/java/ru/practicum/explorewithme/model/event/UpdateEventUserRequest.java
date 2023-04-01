@@ -1,9 +1,14 @@
 package ru.practicum.explorewithme.model.event;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AccessLevel;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.explorewithme.utils.CommonUtils;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,6 +22,7 @@ public class UpdateEventUserRequest {
     @Size(min = 20, max = 7000)
     String description;
     @EventDateConstraint
+    @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
     LocalDateTime eventDate;
     LocationDto location;
     Boolean paid;

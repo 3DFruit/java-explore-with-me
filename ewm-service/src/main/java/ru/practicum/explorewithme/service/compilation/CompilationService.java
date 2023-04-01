@@ -12,5 +12,5 @@ public interface CompilationService {
     void deleteCompilation(Long compId);
     CompilationDto patchCompilation(Long compId, UpdateCompilationRequest request);
     List<CompilationDto> getCompilations(Boolean pinned, Pageable pageable);
-    CompilationDto getCompilationById(Integer compId);
+    CompilationDto getCompilationById(Long compId);
 }

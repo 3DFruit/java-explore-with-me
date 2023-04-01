@@ -15,6 +15,7 @@ import ru.practicum.explorewithme.model.request.EventRequestStatusUpdateResult;
 import ru.practicum.explorewithme.model.request.ParticipationRequestDto;
 import ru.practicum.explorewithme.service.event.EventService;
 import ru.practicum.explorewithme.service.request.RequestService;
+import ru.practicum.explorewithme.utils.CommonUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -37,8 +38,8 @@ public class PrivateEventController {
 
     @GetMapping
     public List<EventShortDto> getEventsOfUser(@PathVariable Long userId,
-                                               @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
-                                               @RequestParam(defaultValue = "10") @Positive Integer size) {
+                                               @RequestParam(defaultValue = CommonUtils.PAGINATION_DEFAULT_FROM) @PositiveOrZero Integer from,
+                                               @RequestParam(defaultValue = CommonUtils.PAGINATION_DEFAULT_SIZE) @Positive Integer size) {
         log.trace("Запрошены события пользователя {}", userId);
         return eventService.getEventsOfUser(userId, new CustomPageRequest(from, size));
     }
@@ -69,7 +70,7 @@ public class PrivateEventController {
         return requestService.getRequestsOfEvent(userId, eventId);
     }
 
-    @GetMapping("/{eventId}/requests")
+    @PatchMapping("/{eventId}/requests")
     public EventRequestStatusUpdateResult patchRequestsOfEvent(@PathVariable Long userId, @PathVariable Long eventId,
                                                                @RequestBody EventRequestStatusUpdateRequest request) {
         log.trace("Изменение статуса заявок на событие {}: {}", eventId, request);

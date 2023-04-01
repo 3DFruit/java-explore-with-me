@@ -47,4 +47,10 @@ public class Event {
     EventState state;
     @Column(name = "event_title", nullable = false)
     String title;
+
+    @Transient
+    Long confirmedRequests;
+
+    @Transient
+    Long views;
 }

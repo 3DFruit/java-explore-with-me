@@ -16,4 +16,12 @@ public class Location {
     private Double lat;
     @Column(name = "longitude", nullable = false)
     private Double lon;
+
+    public Location() {
+
+    }
+    public Location(Double lat, Double lon) {
+        this.lat = lat;
+        this.lon = lon;
+    }
 }

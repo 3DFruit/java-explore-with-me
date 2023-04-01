@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.model.CustomPageRequest;
 import ru.practicum.explorewithme.model.category.CategoryDto;
 import ru.practicum.explorewithme.service.category.CategoryService;
+import ru.practicum.explorewithme.utils.CommonUtils;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -26,8 +27,8 @@ public class PublicCategoryController {
     }
 
     @GetMapping
-    public List<CategoryDto> getCategories(@RequestParam @PositiveOrZero Integer from,
-                                           @RequestParam @Positive Integer size) {
+    public List<CategoryDto> getCategories(@RequestParam(defaultValue = CommonUtils.PAGINATION_DEFAULT_FROM) @PositiveOrZero Integer from,
+                                           @RequestParam(defaultValue = CommonUtils.PAGINATION_DEFAULT_SIZE) @Positive Integer size) {
         log.trace("Запрос категорий");
         return service.getCategories(new CustomPageRequest(from, size, Sort.unsorted()));
     }

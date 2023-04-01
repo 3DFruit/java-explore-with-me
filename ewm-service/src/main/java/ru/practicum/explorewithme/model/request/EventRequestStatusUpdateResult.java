@@ -8,4 +8,12 @@ import java.util.List;
 public class EventRequestStatusUpdateResult {
     List<ParticipationRequestDto> confirmedRequests;
     List<ParticipationRequestDto> rejectedRequests;
+
+    public void addConfirmedRequest(ParticipationRequestDto request) {
+        confirmedRequests.add(request);
+    }
+
+    public void addRejectedRequest(ParticipationRequestDto request) {
+        rejectedRequests.add(request);
+    }
 }
