@@ -274,10 +274,12 @@ public class EventServiceImpl implements EventService {
         if (sortOption != null) {
             switch (sortOption) {
                 case EVENT_DATE:
-                    events = events.stream().sorted(Comparator.comparing(Event::getEventDate)).skip(from).limit(size).collect(Collectors.toList());
+                    events = events.stream().sorted(Comparator.comparing(Event::getEventDate))
+                            .skip(from).limit(size).collect(Collectors.toList());
                     break;
                 case VIEWS:
-                    events = events.stream().sorted(Comparator.comparing(Event::getViews)).skip(from).limit(size).collect(Collectors.toList());
+                    events = events.stream().sorted((e1, e2) -> -Long.compare(e1.getViews(), e2.getViews()))
+                            .skip(from).limit(size).collect(Collectors.toList());
                     break;
                 default:
                     events = events.stream().skip(from).limit(size).collect(Collectors.toList());
