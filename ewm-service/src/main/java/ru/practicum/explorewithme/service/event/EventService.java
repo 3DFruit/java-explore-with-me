@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.service.event;
 
 import org.springframework.data.domain.Pageable;
+import ru.practicum.explorewithme.model.EventSortOption;
 import ru.practicum.explorewithme.model.event.*;
 
 import java.time.LocalDateTime;
@@ -30,7 +31,9 @@ public interface EventService {
                                            LocalDateTime rangeStart,
                                            LocalDateTime rangeEnd,
                                            Boolean onlyAvailable,
-                                           Pageable pageable);
+                                           Integer from,
+                                           Integer size,
+                                           EventSortOption sortOption);
 
     EventFullDto getPublishedEventById(Long id);
 

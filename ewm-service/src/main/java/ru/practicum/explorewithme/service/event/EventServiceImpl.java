@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.client.StatisticsClient;
+import ru.practicum.explorewithme.model.EventSortOption;
 import ru.practicum.explorewithme.model.ViewStats;
 import ru.practicum.explorewithme.model.category.Category;
 import ru.practicum.explorewithme.model.event.*;
@@ -229,7 +230,9 @@ public class EventServiceImpl implements EventService {
                                                   LocalDateTime rangeStart,
                                                   LocalDateTime rangeEnd,
                                                   Boolean onlyAvailable,
-                                                  Pageable pageable) {
+                                                  Integer from,
+                                                  Integer size,
+                                                  EventSortOption sortOption) {
         BooleanBuilder booleanBuilder = new BooleanBuilder(QEvent.event.state.eq(EventState.PUBLISHED));
         if (text != null && !text.isBlank()) {
             BooleanExpression byTextInAnnotation = QEvent.event.annotation.likeIgnoreCase("%" + text + "%");
@@ -259,6 +262,16 @@ public class EventServiceImpl implements EventService {
         List<Event> events = new ArrayList<>();
         eventStorage.findAll(booleanBuilder).forEach(events::add);
         events = setConfirmedRequestsAndViews(events);
+        switch (sortOption) {
+            case EVENT_DATE:
+                events = events.stream().sorted(Comparator.comparing(Event::getEventDate)).skip(from).limit(size).collect(Collectors.toList());
+                break;
+            case VIEWS:
+                events = events.stream().sorted(Comparator.comparing(Event::getViews)).skip(from).limit(size).collect(Collectors.toList());
+                break;
+            default:
+                events = events.stream().skip(from).limit(size).collect(Collectors.toList());
+        }
         return events.stream().map(mapper::toEventShortDto).collect(Collectors.toList());
     }
 

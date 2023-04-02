@@ -2,11 +2,9 @@ package ru.practicum.explorewithme.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.client.StatisticsClient;
-import ru.practicum.explorewithme.model.CustomPageRequest;
 import ru.practicum.explorewithme.model.EventSortOption;
 import ru.practicum.explorewithme.model.event.EventFullDto;
 import ru.practicum.explorewithme.model.event.EventShortDto;
@@ -53,22 +51,11 @@ public class PublicEventController {
                 throw new ConvertationException("Не удалось найти EventSortOption " + sort);
             });
         }
-        Sort eventSort = Sort.unsorted();
-        if (sortOption != null) {
-            switch (sortOption) {
-                case EVENT_DATE:
-                    eventSort = Sort.by("event_date").ascending();
-                    break;
-                case VIEWS:
-                default:
-                    eventSort = Sort.unsorted();
-            }
-        }
         List<EventShortDto> result = eventService.getPublishedEvents(text, categories, paid,
                 rangeStart != null ? LocalDateTime.parse(rangeStart, CommonUtils.DATE_TIME_FORMATTER) : null,
                 rangeEnd != null ? LocalDateTime.parse(rangeEnd, CommonUtils.DATE_TIME_FORMATTER) : null, onlyAvailable,
-                new CustomPageRequest(from, size, eventSort));
-        client.writeStat("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()).block();
+                from, size, sortOption);
+        client.writeStat("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()).subscribe();
         return result;
     }
 
@@ -76,7 +63,7 @@ public class PublicEventController {
     public EventFullDto getPublishedEventById(@PathVariable Long id, HttpServletRequest request) {
         log.trace("Запрос опубликованного события {}", id);
         EventFullDto result = eventService.getPublishedEventById(id);
-        client.writeStat("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()).block();
+        client.writeStat("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()).subscribe();
         return result;
     }
 }

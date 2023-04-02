@@ -3,6 +3,7 @@ package ru.practicum.explorewithme.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,7 +24,7 @@ public class ErrorHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class,
             MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleValidationException(final RuntimeException e) {
+    public ApiError handleValidationException(final Exception e) {
         log.error("Ошибка запроса: {}", e.getMessage(), e);
         return new ApiError(e.getMessage(),
                 "Ошибка запроса",
@@ -46,7 +47,8 @@ public class ErrorHandler {
     @ExceptionHandler({DataIntegrityViolationException.class,
             AdminUpdateStatusException.class,
             UserUpdateStatusException.class,
-            RequestCreationException.class})
+            RequestCreationException.class,
+            HttpMessageNotReadableException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleDataIntegrityViolationException(final Exception e) {
         log.error("Нарушение правил цолостности БД {}", e.getMessage(), e);
