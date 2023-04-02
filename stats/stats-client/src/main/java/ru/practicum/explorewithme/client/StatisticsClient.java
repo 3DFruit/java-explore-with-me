@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.client;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,7 +16,8 @@ import java.util.List;
 
 @Service
 public class StatisticsClient {
-    private static final String SERVER_URL = "http://localhost:9090";
+    @Value("${stats-server.url:http://localhost:9090}")
+    private static String SERVER_URL;
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final WebClient client;
