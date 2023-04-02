@@ -16,15 +16,12 @@ import java.util.List;
 
 @Service
 public class StatisticsClient {
-    @Value("${stats-server.url:http://localhost:9090}")
-    private static String SERVER_URL;
-
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final WebClient client;
 
-    public StatisticsClient() {
+    public StatisticsClient(@Value("${STATS_SERVER_URL}") String serverUrl) {
         this.client = WebClient.builder()
-                .baseUrl(SERVER_URL)
+                .baseUrl(serverUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }

@@ -9,10 +9,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.explorewithme.model.exception.AdminUpdateStatusException;
-import ru.practicum.explorewithme.model.exception.ObjectNotFoundException;
-import ru.practicum.explorewithme.model.exception.RequestCreationException;
-import ru.practicum.explorewithme.model.exception.UserUpdateStatusException;
+import ru.practicum.explorewithme.model.exception.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -22,7 +19,8 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class ErrorHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class,
-            MissingServletRequestParameterException.class})
+            MissingServletRequestParameterException.class,
+            ConvertationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidationException(final Exception e) {
         log.error("Ошибка запроса: {}", e.getMessage(), e);
@@ -48,7 +46,10 @@ public class ErrorHandler {
             AdminUpdateStatusException.class,
             UserUpdateStatusException.class,
             RequestCreationException.class,
-            HttpMessageNotReadableException.class})
+            HttpMessageNotReadableException.class,
+            FullEventException.class,
+            PermissionException.class,
+            RequestStatusException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleDataIntegrityViolationException(final Exception e) {
         log.error("Нарушение правил цолостности БД {}", e.getMessage(), e);

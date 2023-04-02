@@ -3,7 +3,7 @@ package ru.practicum.explorewithme.service.event;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
     private final EventStorage eventStorage;
@@ -35,6 +34,16 @@ public class EventServiceImpl implements EventService {
     private final StatisticsClient client;
     private final EventMapper mapper;
     private final RequestStorage requestStorage;
+
+    public EventServiceImpl(EventStorage eventStorage, UserStorage userStorage, CategoryStorage categoryStorage, LocationStorage locationStorage, EventMapper mapper, RequestStorage requestStorage, @Value("${STATS_SERVER_URL}") String serverUrl) {
+        this.eventStorage = eventStorage;
+        this.userStorage = userStorage;
+        this.categoryStorage = categoryStorage;
+        this.locationStorage = locationStorage;
+        this.mapper = mapper;
+        this.requestStorage = requestStorage;
+        this.client = new StatisticsClient(serverUrl);
+    }
 
     @Override
     public List<EventFullDto> getEvents(List<Long> users,
@@ -262,15 +271,19 @@ public class EventServiceImpl implements EventService {
         List<Event> events = new ArrayList<>();
         eventStorage.findAll(booleanBuilder).forEach(events::add);
         events = setConfirmedRequestsAndViews(events);
-        switch (sortOption) {
-            case EVENT_DATE:
-                events = events.stream().sorted(Comparator.comparing(Event::getEventDate)).skip(from).limit(size).collect(Collectors.toList());
-                break;
-            case VIEWS:
-                events = events.stream().sorted(Comparator.comparing(Event::getViews)).skip(from).limit(size).collect(Collectors.toList());
-                break;
-            default:
-                events = events.stream().skip(from).limit(size).collect(Collectors.toList());
+        if (sortOption != null) {
+            switch (sortOption) {
+                case EVENT_DATE:
+                    events = events.stream().sorted(Comparator.comparing(Event::getEventDate)).skip(from).limit(size).collect(Collectors.toList());
+                    break;
+                case VIEWS:
+                    events = events.stream().sorted(Comparator.comparing(Event::getViews)).skip(from).limit(size).collect(Collectors.toList());
+                    break;
+                default:
+                    events = events.stream().skip(from).limit(size).collect(Collectors.toList());
+            }
+        } else {
+            events = events.stream().skip(from).limit(size).collect(Collectors.toList());
         }
         return events.stream().map(mapper::toEventShortDto).collect(Collectors.toList());
     }

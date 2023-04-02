@@ -2,6 +2,7 @@ package ru.practicum.explorewithme.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.client.StatisticsClient;
@@ -27,9 +28,9 @@ public class PublicEventController {
     StatisticsClient client;
 
     @Autowired
-    public PublicEventController(EventService eventService, StatisticsClient client) {
+    public PublicEventController(EventService eventService, @Value("${STATS_SERVER_URL}") String serverUrl) {
         this.eventService = eventService;
-        this.client = client;
+        this.client = new StatisticsClient(serverUrl);
     }
 
     @GetMapping
