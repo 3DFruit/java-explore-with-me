@@ -35,6 +35,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (uris == null || uris.isEmpty()) {
+            return unique ? statisticsStorage.getAllStatisticsByStartAndEndUniqueIp(start, end)
+                    : statisticsStorage.getAllStatisticsByStartAndEnd(start, end);
+        }
         return unique ? statisticsStorage.getStatisticOfUrisByStartAndEndUniqueIp(start, end, uris)
                 : statisticsStorage.getStatisticOfUrisByStartAndEnd(start, end, uris);
     }

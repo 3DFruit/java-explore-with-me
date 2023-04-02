@@ -35,7 +35,7 @@ public class StatisticsController {
     @GetMapping("/stats")
     public List<ViewStats> getStats(@RequestParam String start,
                                     @RequestParam String end,
-                                    @RequestParam List<String> uris,
+                                    @RequestParam(required = false) List<String> uris,
                                     @RequestParam(defaultValue = "false") Boolean unique) {
         log.info("Запрос статистики за период {}-{}, uris: {}, unique: {}", start, end, uris, unique);
         LocalDateTime startTime = LocalDateTime.parse(start, DATE_TIME_FORMATTER);

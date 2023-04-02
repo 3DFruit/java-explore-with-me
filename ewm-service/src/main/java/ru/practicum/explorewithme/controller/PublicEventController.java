@@ -56,7 +56,7 @@ public class PublicEventController {
                 rangeStart != null ? LocalDateTime.parse(rangeStart, CommonUtils.DATE_TIME_FORMATTER) : null,
                 rangeEnd != null ? LocalDateTime.parse(rangeEnd, CommonUtils.DATE_TIME_FORMATTER) : null, onlyAvailable,
                 from, size, sortOption);
-        client.writeStat("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()).subscribe();
+        client.writeStat("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()).block();
         return result;
     }
 
@@ -64,7 +64,7 @@ public class PublicEventController {
     public EventFullDto getPublishedEventById(@PathVariable Long id, HttpServletRequest request) {
         log.trace("Запрос опубликованного события {}", id);
         EventFullDto result = eventService.getPublishedEventById(id);
-        client.writeStat("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()).subscribe();
+        client.writeStat("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()).block();
         return result;
     }
 }
