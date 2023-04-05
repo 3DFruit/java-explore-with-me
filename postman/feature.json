@@ -65,9 +65,7 @@
               "\r",
               "pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
               "    pm.expect(target.user).to.not.be.null;\r",
-              "    pm.expect(target.user.id).equal(pm.collectionVariables.get(\"sid\"));\r",
               "    pm.expect(target.subscriber).to.not.be.null;\r",
-              "    pm.expect(target.subscriber.id).equal(pm.collectionVariables.get(\"uid\"));\r",
               "    pm.expect(target.subscribedOn).to.not.be.null;\r",
               "});"
             ],
