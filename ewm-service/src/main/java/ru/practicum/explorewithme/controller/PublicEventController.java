@@ -28,7 +28,7 @@ public class PublicEventController {
     StatisticsClient client;
 
     @Autowired
-    public PublicEventController(EventService eventService, @Value("${STATS_SERVER_URL}") String serverUrl) {
+    public PublicEventController(EventService eventService, @Value("${STATS_SERVER_URL:http://localhost:9090}") String serverUrl) {
         this.eventService = eventService;
         this.client = new StatisticsClient(serverUrl);
     }

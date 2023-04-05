@@ -35,7 +35,7 @@ public class EventServiceImpl implements EventService {
     private final EventMapper mapper;
     private final RequestStorage requestStorage;
 
-    public EventServiceImpl(EventStorage eventStorage, UserStorage userStorage, CategoryStorage categoryStorage, LocationStorage locationStorage, EventMapper mapper, RequestStorage requestStorage, @Value("${STATS_SERVER_URL}") String serverUrl) {
+    public EventServiceImpl(EventStorage eventStorage, UserStorage userStorage, CategoryStorage categoryStorage, LocationStorage locationStorage, EventMapper mapper, RequestStorage requestStorage, @Value("${STATS_SERVER_URL:http://localhost:9090}") String serverUrl) {
         this.eventStorage = eventStorage;
         this.userStorage = userStorage;
         this.categoryStorage = categoryStorage;
@@ -295,6 +295,68 @@ public class EventServiceImpl implements EventService {
         Event event = eventStorage.findByIdAndState(id, EventState.PUBLISHED)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найдено событие с id " + id));
         return mapper.toEventFullDto(setConfirmedRequestAndViews(event));
+    }
+
+    @Override
+    public List<EventShortDto> getPublishedEventsOfUsers(List<Long> userIds,
+                                                         String text,
+                                                         List<Long> categories,
+                                                         Boolean paid,
+                                                         LocalDateTime rangeStart,
+                                                         LocalDateTime rangeEnd,
+                                                         Boolean onlyAvailable,
+                                                         Integer from,
+                                                         Integer size,
+                                                         EventSortOption sortOption) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder(QEvent.event.state.eq(EventState.PUBLISHED));
+        if (userIds != null && !userIds.isEmpty()) {
+            booleanBuilder.and(QEvent.event.initiator.id.in(userIds));
+        }
+        if (text != null && !text.isBlank()) {
+            BooleanExpression byTextInAnnotation = QEvent.event.annotation.likeIgnoreCase("%" + text + "%");
+            BooleanExpression byTextInDescription = QEvent.event.description.likeIgnoreCase("%" + text + "%");
+            booleanBuilder.and(byTextInAnnotation.or(byTextInDescription));
+        }
+        if (categories != null && categories.size() != 0) {
+            booleanBuilder.and(QEvent.event.category.id.in(categories));
+        }
+        if (paid != null) {
+            booleanBuilder.and(QEvent.event.paid.eq(paid));
+        }
+        if (rangeStart != null && rangeEnd != null) {
+            booleanBuilder.and(QEvent.event.eventDate.between(rangeStart, rangeEnd));
+        } else {
+            booleanBuilder.and(QEvent.event.eventDate.after(LocalDateTime.now()));
+        }
+        if (onlyAvailable != null && onlyAvailable) {
+            BooleanExpression withoutLimit = QEvent.event.participantLimit.eq(0);
+            BooleanExpression withLimitAvailable = QEvent.event.participantLimit.gt(
+                    JPAExpressions.select(QRequest.request.count())
+                            .from(QRequest.request)
+                            .where(QRequest.request.event.eq(QEvent.event))
+            );
+            booleanBuilder.and(withoutLimit.or(withLimitAvailable));
+        }
+        List<Event> events = new ArrayList<>();
+        eventStorage.findAll(booleanBuilder).forEach(events::add);
+        events = setConfirmedRequestsAndViews(events);
+        if (sortOption != null) {
+            switch (sortOption) {
+                case EVENT_DATE:
+                    events = events.stream().sorted(Comparator.comparing(Event::getEventDate))
+                            .skip(from).limit(size).collect(Collectors.toList());
+                    break;
+                case VIEWS:
+                    events = events.stream().sorted((e1, e2) -> -Long.compare(e1.getViews(), e2.getViews()))
+                            .skip(from).limit(size).collect(Collectors.toList());
+                    break;
+                default:
+                    events = events.stream().skip(from).limit(size).collect(Collectors.toList());
+            }
+        } else {
+            events = events.stream().skip(from).limit(size).collect(Collectors.toList());
+        }
+        return events.stream().map(mapper::toEventShortDto).collect(Collectors.toList());
     }
 
     @Override
