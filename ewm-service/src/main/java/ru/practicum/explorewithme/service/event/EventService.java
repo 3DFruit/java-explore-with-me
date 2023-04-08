@@ -35,6 +35,17 @@ public interface EventService {
                                            Integer size,
                                            EventSortOption sortOption);
 
+    List<EventShortDto> getPublishedEventsOfUsers(List<Long> userIds,
+                                                  String text,
+                                                  List<Long> categories,
+                                                  Boolean paid,
+                                                  LocalDateTime rangeStart,
+                                                  LocalDateTime rangeEnd,
+                                                  Boolean onlyAvailable,
+                                                  Integer from,
+                                                  Integer size,
+                                                  EventSortOption sortOption);
+
     EventFullDto getPublishedEventById(Long id);
 
     Event getEventById(Long eventId);

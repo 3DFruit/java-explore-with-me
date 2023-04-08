@@ -19,7 +19,7 @@ public class StatisticsClient {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final WebClient client;
 
-    public StatisticsClient(@Value("${STATS_SERVER_URL}") String serverUrl) {
+    public StatisticsClient(@Value("${STATS_SERVER_URL:http://localhost:9090}") String serverUrl) {
         this.client = WebClient.builder()
                 .baseUrl(serverUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
